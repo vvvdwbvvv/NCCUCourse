@@ -12,8 +12,8 @@ pip3 install -r requirement.txt
 ## Setup
 As a NCCU student, you have your iNCCU account. Please create a `.env` file and give following informations.
 ```
-USERNAME=*********
-PASSWORD=*****
+STUDENTID=*********
+STUDENTPWD=*****
 
 YEAR=111
 SEM=2
