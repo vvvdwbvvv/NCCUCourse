@@ -5,10 +5,10 @@ load_dotenv()
 
 YEAR = os.getenv("YEAR") or ""
 SEM = os.getenv("SEM") or ""
-USERNAME = os.getenv("USERNAME") or ""
-PASSWORD = os.getenv("PASSWORD") or ""
+USERNAME = os.getenv("STUDENTID") or ""
+PASSWORD = os.getenv("STUDENTPWD") or ""
 
-SERVER_URL = "http://es.nccu.edu.tw/"
+SERVER_URL = "https://es.nccu.edu.tw/"
 KEY = "angu1arjjlST@2019"
 SEM_API = SERVER_URL + "semester/"
 PERSON_API = SERVER_URL + "person/"

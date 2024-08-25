@@ -9,6 +9,7 @@ def des_ecb_encode(source, key):
     return b64encode(des_result).decode()
 
 def get_login_url(username, password):
+    print((username, password))
     source = "aNgu1ar%!" + username + "X_X" + password + "!%ASjjLInGH:lkjhdsa:)_l0OK"
     return PERSON_API + str(des_ecb_encode(source, KEY)) + "/"
 

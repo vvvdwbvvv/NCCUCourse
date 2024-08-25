@@ -1,7 +1,6 @@
-import sys, csv
 from bs4 import BeautifulSoup
 from time import sleep
-import os, json, logging, tqdm, requests, datetime, argparse
+import os, json, logging, tqdm, requests, datetime, argparse, csv
 from DB import DB
 
 from User import User
@@ -69,10 +68,17 @@ if __name__ == "__main__":
 
     if args.course:
         # fetch all deps first, make a single search less than 500
-        units = requests.get("https://qrysub.nccu.edu.tw/assets/api/unit.json")
-        units.raise_for_status()
+        try:
+            units = requests.get("https://qrysub.nccu.edu.tw/assets/api/unit.json")
+            units.raise_for_status()
+            units = units.json()
+        except Exception as e:
+            logging.error("Failed to get unit list, falls back to local cache")
+            with open("data/unit.json") as f:
+                units = json.load(f)
+            
         categories = list()
-        for dp1 in [x for x in units.json() if x["utCodL1"] != "0"]:
+        for dp1 in [x for x in units if x["utCodL1"] != "0"]:
             for dp2 in [x for x in dp1["utL2"] if x["utCodL2"] != "0"]:
                 for dp3 in [x for x in dp2["utL3"] if x["utCodL3"] != "0"]:
                     categories.append(

@@ -1,8 +1,6 @@
-from dotenv import load_dotenv
-from os import getenv
+from constant import USERNAME, PASSWORD
 import requests
 from util import get_login_url, get_addtrack_url, get_deltrack_url, get_track_url
-load_dotenv()
 
 class User:
   _username: str
@@ -10,9 +8,11 @@ class User:
   _token: str
   
   def __init__(self) -> None:
-    self._username = getenv("USERNAME") or ""
-    self._password = getenv("PASSWORD") or ""
-    res = requests.get(get_login_url(self._username, self._password)).json()
+    self._username = USERNAME
+    self._password = PASSWORD
+    res = requests.get(get_login_url(self._username, self._password))
+    res = res.json()
+    print(res)
     try:
       self._token = res[0]["encstu"]
     except:
