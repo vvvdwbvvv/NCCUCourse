@@ -4,9 +4,9 @@ import os, json, logging, tqdm, requests, datetime, argparse, csv
 from DB import DB
 
 from User import User
-from constant import YEAR_SEM, YEAR, SEM, COURSERESULT_CSV, COURSERESULT_YEARSEM
-from fetchDescription import fetchDescription
-from fetchRate import fetchRate
+from constant import YEAR_SEM, YEAR, SEM, course_result_csv, COURSERESULT_YEARSEM
+from fetchDescription import fetch_description
+from fetchRate import fetch_rate
 # from translateRate import translateRate
 
 all_semesters = [
@@ -122,8 +122,8 @@ if __name__ == "__main__":
                         course_id = "{}{}".format(semester, course["subNum"])
                         # if db.isCourseExist(courseId, category):
                         #   continue
-                        detail = fetchDescription(course_id)
-                        db.addCourse(
+                        detail = fetch_description(course_id)
+                        db.add_course(
                             detail["qrysub"],
                             detail["qrysubEn"],
                             category["dp1"],
@@ -147,12 +147,12 @@ if __name__ == "__main__":
 
     if args.teacher:
         # Read course list
-        courses_list = db.getThisSemesterCourse(YEAR, SEM)
+        courses_list = db.get_this_semester_course(YEAR, SEM)
 
         user = User()
 
         # Delete exist track courses before adding
-        courses = user.getTrack()
+        courses = user.get_track()
         if len(courses) > 0:
             tqdm_courses = tqdm.tqdm(courses, leave=False)
             for course in tqdm_courses:
@@ -160,7 +160,7 @@ if __name__ == "__main__":
                     sleep(0.2)
                     course_id = str(course["subNum"])
                     tqdm_courses.set_postfix_str("Pre-deleting {}".format(course_id))
-                    user.deleteTrack(course_id)
+                    user.delete_track(course_id)
                 except Exception as e:
                     logging.error(e)
                     continue
@@ -171,13 +171,13 @@ if __name__ == "__main__":
             try:
                 sleep(0.2)
                 tqdm_courses.set_postfix_str("Adding {}".format(course_id))
-                user.addTrack(course_id)
+                user.add_track(course_id)
             except Exception as e:
                 logging.error(e)
                 continue
 
         # get track list and parse out teacher id
-        courses = user.getTrack()
+        courses = user.get_track()
         teacher_id_dict = dict()
         tqdm_courses = tqdm.tqdm(courses, leave=False)
         for course in tqdm_courses:
@@ -196,7 +196,7 @@ if __name__ == "__main__":
                         )
                     )[1].split(".htm")[0]
                     teacher_id_dict[teacher_name] = teacher_id
-                    db.addTeacher(teacher_id, teacher_name)
+                    db.add_teacher(teacher_id, teacher_name)
                 elif teacher_stat_url.startswith(
                     "https://newdoc.nccu.edu.tw/teaschm/{}/set20.jsp".format(YEAR_SEM)
                 ):
@@ -226,7 +226,7 @@ if __name__ == "__main__":
                             .split(".htm")[0]
                         )
                         teacher_id_dict[teacher_name] = teacher_id
-                        db.addTeacher(teacher_id, teacher_name)
+                        db.add_teacher(teacher_id, teacher_name)
             except Exception as e:
                 logging.error(e)
                 continue
@@ -238,7 +238,7 @@ if __name__ == "__main__":
                 sleep(0.2)
                 course_id = str(course["subNum"])
                 tqdm_courses.set_postfix_str("Deleting {}".format(course_id))
-                user.deleteTrack(course_id)
+                user.delete_track(course_id)
             except Exception as e:
                 logging.error(e)
                 continue
@@ -253,7 +253,7 @@ if __name__ == "__main__":
 
     if args.rate:
         # Read teacher list
-        new_teacher_list = db.getTeachers()
+        new_teacher_list = db.get_teacher()
         with open(os.path.join(dirPath, "old_data", "1111_teachers.json"), "r") as f:
             old_teacher_list = json.loads(f.read())
         teacher_list = {**new_teacher_list, **old_teacher_list}
@@ -294,10 +294,10 @@ if __name__ == "__main__":
                             row[0].text, row[1].text, row[2].text
                         )
                         tqdm_courses.set_postfix_str("processing: {}".format(course_id))
-                        if db.isRateExist(course_id):
+                        if db.is_rate_exist(course_id):
                             continue
                         sleep(0.2)
-                        rates = fetchRate(
+                        rates = fetch_rate(
                             "http://newdoc.nccu.edu.tw/teaschm/{}/{}".format(
                                 semester, row[-1].find("a")["href"]
                             )
@@ -308,7 +308,7 @@ if __name__ == "__main__":
                         for index, rate in enumerate(tqdm_rates):
                             # rateEn = translateRate(str(rate))
                             rateEn = ""
-                            db.addRate(index, course_id, teacher_id, str(rate), rateEn)
+                            db.add_rate(index, course_id, teacher_id, str(rate), rateEn)
 
                 except Exception as e:
                     logging.error(e)
@@ -323,8 +323,8 @@ if __name__ == "__main__":
     # ==============================
     if args.result:
         for sem in COURSERESULT_YEARSEM:
-            row_count = sum(1 for line in open("./data/" + COURSERESULT_CSV(sem), "r"))
-            with open("./data/" + COURSERESULT_CSV(sem), "r") as f:
+            row_count = sum(1 for line in open("./data/" + course_result_csv(sem), "r"))
+            with open("./data/" + course_result_csv(sem), "r") as f:
                 lines = [line for line in f]
                 i = 0
                 reader = tqdm.tqdm(csv.reader(lines), total=len(lines))
@@ -339,7 +339,7 @@ if __name__ == "__main__":
                             + str(courseid)
                             + "%20/"
                         ).json()
-                        db.addResult(
+                        db.add_result(
                             sem,
                             courseid,
                             res[0]["subNam"],

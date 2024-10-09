@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 
-def fetchRate(url: str):
+def fetch_rate(url: str):
   res = requests.get(url.replace("https://", "http://"))
   res.raise_for_status()
   soup = BeautifulSoup(res.content, "html.parser")
@@ -11,4 +11,4 @@ def fetchRate(url: str):
 
 
 if __name__ == "__main__":
-  print(fetchRate("https://newdoc.nccu.edu.tw/teaschm/1011/statisticText.jsp-y=1002&tnum=101476&snum=000346021.htm"))
+  print(fetch_rate("https://newdoc.nccu.edu.tw/teaschm/1011/statisticText.jsp-y=1002&tnum=101476&snum=000346021.htm"))

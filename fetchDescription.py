@@ -1,8 +1,8 @@
 from bs4 import BeautifulSoup
 import re, requests, logging
 
-def fetchDescription(courseId: str):
-  if len(courseId) != 13:
+def fetch_description(course_id: str):
+  if len(course_id) != 13:
     raise Exception("Wrong courseId format")
   result = {
     "description": list(),
@@ -12,12 +12,12 @@ def fetchDescription(courseId: str):
   
   try:
     # get qrysub detail
-    response = requests.get("http://es.nccu.edu.tw/course/zh-TW/{} /".format(courseId))
+    response = requests.get("http://es.nccu.edu.tw/course/zh-TW/{} /".format(course_id))
     response.raise_for_status()
     if len(response.json()) != 1:
       raise Exception("No matched course")
     result["qrysub"] = response.json()[0]
-    response = requests.get("http://es.nccu.edu.tw/course/en/{} /".format(courseId))
+    response = requests.get("http://es.nccu.edu.tw/course/en/{} /".format(course_id))
     response.raise_for_status()
     if len(response.json()) != 1:
       raise Exception("No matched course")
@@ -39,8 +39,8 @@ def fetchDescription(courseId: str):
           result["objectives"].append(line)  
     else:
       # get syllabus description
-      descriptionTitle = soap.find("div", {"class": "col-sm-7 sylview--mtop col-p-6"}).find("h2", {"class": "text-primary"})
-      descriptions = descriptionTitle.find_next_siblings(True)
+      description_title = soap.find("div", {"class": "col-sm-7 sylview--mtop col-p-6"}).find("h2", {"class": "text-primary"})
+      descriptions = description_title.find_next_siblings(True)
       for description in descriptions:
         if description.attrs and description.attrs.get("class") and ["row", "sylview-mtop", "fa-border"] == description.attrs["class"]:
           break
@@ -54,10 +54,10 @@ def fetchDescription(courseId: str):
           result["objectives"].append(line)
     
   except Exception as e:
-    logging.error(courseId)
+    logging.error(course_id)
     logging.error(e)
   
   return result
 
 if __name__ == "__main__":
-  print(fetchDescription("1131000219521"))
+  print(fetch_description("1131000219521"))

@@ -64,22 +64,22 @@ class DB:
     cur.execute("CREATE TABLE IF NOT EXISTS RATE ( courseId TEXT NOT NULL, rowId TEXT NOT NULL, teacherId TEXT, content TEXT, contentEn TEXT, PRIMARY KEY (courseId, rowId) )")
     cur.execute("CREATE TABLE IF NOT EXISTS RESULT ( courseId TEXT, yearsem TEXT, name TEXT, teacher TEXT, time TEXT, studentLimit INTEGER, studentCount INTEGER, lastEnroll INTEGER, PRIMARY KEY (courseId))")
     
-  def addRate(self, rowId: str, courseId: str, teacherId: str, content: str, contentEn: str):
+  def add_rate(self, row_id: str, course_id: str, teacher_id: str, content: str, content_en: str):
     cur = self.con.cursor()
-    cur.execute("INSERT OR REPLACE INTO RATE (rowId, courseId, teacherId, content, contentEn) VALUES (?, ?, ?, ?, ?)", (rowId, courseId, teacherId, content, contentEn))
+    cur.execute("INSERT OR REPLACE INTO RATE (row_id, course_id, teacher_id, content, content_en) VALUES (?, ?, ?, ?, ?)", (row_id, course_id, teacher_id, content, content_en))
     self.con.commit()
   
-  def addTeacher(self, id: str, name: str):
+  def add_teacher(self, id: str, name: str):
     cur = self.con.cursor()
     cur.execute("INSERT OR REPLACE INTO TEACHER (id, name) VALUES (?, ?)", (id, name))
     self.con.commit()
   
-  def addResult(self, yearsem: str, courseId: str, name: str, teacher: str, time: str, studentLimit: int, studentCount: int, lastEnroll: int):
+  def add_result(self, year_sem: str, course_id: str, name: str, teacher: str, time: str, student_limit: int, student_count: int, last_enroll: int):
     cur = self.con.cursor()
-    cur.execute("INSERT OR REPLACE INTO RESULT (courseId, yearsem, name, teacher, time, studentLimit, studentCount, lastEnroll) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (yearsem + courseId, yearsem, name, teacher, time, studentLimit, studentCount, lastEnroll))
+    cur.execute("INSERT OR REPLACE INTO RESULT (course_id, year_sem, name, teacher, time, student_limit, student_count, last_enroll) VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (year_sem + course_id, year_sem, name, teacher, time, student_limit, student_count, last_enroll))
     self.con.commit()
     
-  def getTeachers(self):
+  def get_teacher(self):
     cur = self.con.cursor()
     request = cur.execute("SELECT * FROM TEACHER")
     response = request.fetchall()
@@ -90,14 +90,14 @@ class DB:
     
     return res
   
-  def addCourse(self, courseData: dict, courseDataEn: dict, dp1: str, dp2: str, dp3: str, syllabus: str, description: str):
-    if courseData["subKind"] == "必修":
+  def add_course(self, course_data: dict, course_data_en: dict, dp1: str, dp2: str, dp3: str, syllabus: str, description: str):
+    if course_data["subKind"] == "必修":
       kind = 1
-    elif courseData["subKind"] == "選修":
+    elif course_data["subKind"] == "選修":
       kind = 2
-    elif courseData["subKind"] == "群修":
+    elif course_data["subKind"] == "群修":
       kind = 3
-    elif "通識" in courseData["lmtKind"]:
+    elif "通識" in course_data["lmtKind"]:
       kind = 4
     else:
       kind = 0
@@ -107,73 +107,73 @@ class DB:
       '''INSERT OR REPLACE INTO COURSE ( id, y, s,  subNum, name, nameEn, teacher, teacherEn, kind, time, timeEn, lmtKind, lmtKindEn, core, lang, langEn, smtQty, classroom, classroomId, unit, unitEn, dp1, dp2, dp3, point, subRemainUrl, subSetUrl, subUnitRuleUrl, teaExpUrl, teaSchmUrl, tranTpe, tranTpeEn, info, infoEn, note, noteEn, syllabus, objective ) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);''',
       (
-        "{}{}{}".format(courseData["y"], courseData["s"], courseData["subNum"]),
-        courseData["y"],
-        courseData["s"],
-        courseData["subNum"],
-        courseData["subNam"],
-        courseDataEn["subNam"],
-        courseData["teaNam"],
-        courseDataEn["teaNam"],
+        "{}{}{}".format(course_data["y"], course_data["s"], course_data["subNum"]),
+        course_data["y"],
+        course_data["s"],
+        course_data["subNum"],
+        course_data["subNam"],
+        course_data_en["subNam"],
+        course_data["teaNam"],
+        course_data_en["teaNam"],
         kind,
-        courseData["subTime"],
-        courseDataEn["subTime"],
-        courseData["lmtKind"],
-        courseDataEn["lmtKind"],
-        (lambda x:1 if x == "是" else 0)(courseData["core"]),
-        courseData["langTpe"],
-        courseDataEn["langTpe"],
-        courseData["smtQty"],
-        courseData["subClassroom"],
-        courseDataEn["subClassroom"],
-        courseData["subGde"],
-        courseDataEn["subGde"],
+        course_data["subTime"],
+        course_data_en["subTime"],
+        course_data["lmtKind"],
+        course_data_en["lmtKind"],
+        (lambda x:1 if x == "是" else 0)(course_data["core"]),
+        course_data["langTpe"],
+        course_data_en["langTpe"],
+        course_data["smtQty"],
+        course_data["subClassroom"],
+        course_data_en["subClassroom"],
+        course_data["subGde"],
+        course_data_en["subGde"],
         dp1,
         dp2,
         dp3,
-        float(courseData["subPoint"]),
-        courseData["subRemainUrl"],
-        courseData["subSetUrl"],
-        courseData["subUnitRuleUrl"],
-        courseData["teaExpUrl"],
-        courseData["teaSchmUrl"],
-        courseData["tranTpe"],
-        courseDataEn["tranTpe"],
-        courseData["info"],
-        courseDataEn["info"],
-        courseData["note"],
-        courseDataEn["note"],
+        float(course_data["subPoint"]),
+        course_data["subRemainUrl"],
+        course_data["subSetUrl"],
+        course_data["subUnitRuleUrl"],
+        course_data["teaExpUrl"],
+        course_data["teaSchmUrl"],
+        course_data["tranTpe"],
+        course_data_en["tranTpe"],
+        course_data["info"],
+        course_data_en["info"],
+        course_data["note"],
+        course_data_en["note"],
         syllabus, description
       )
     )
     self.con.commit()
   
-  def getCourse(self, y: str, s: str):
+  def get_course(self, y: str, s: str):
     cur = self.con.cursor()
     request = cur.execute('SELECT teaNam FROM COURSE WHERE y = 111 AND s = 2')
     response = request.fetchall()
     
     return [str(x[0]) for x in response]
   
-  def getThisSemesterCourse(self, y: str, s: str):
+  def get_this_semester_course(self, y: str, s: str):
     cur = self.con.cursor()
     request = cur.execute('SELECT DISTINCT subNum FROM COURSE WHERE y = ? AND s = ?', [y, s])
     response = request.fetchall()
     
     return [str(x[0]) for x in response]
 
-  def isCourseExist(self, courseId: str, dp: dict):
+  def is_course_exist(self, course_id: str, dp: dict):
     cur = self.con.cursor()
-    request = cur.execute('SELECT COUNT(*) FROM COURSE WHERE id = ? AND dp1 = ? AND dp2 = ? AND dp3 = ?', [courseId, dp["dp1"], dp["dp2"], dp["dp3"]])
+    request = cur.execute('SELECT COUNT(*) FROM COURSE WHERE id = ? AND dp1 = ? AND dp2 = ? AND dp3 = ?', [course_id, dp["dp1"], dp["dp2"], dp["dp3"]])
     response = request.fetchone()
     return response[0] > 0
   
-  def isRateExist(self, courseId: str):
+  def is_rate_exist(self, course_id: str):
     cur = self.con.cursor()
-    request = cur.execute('SELECT COUNT( DISTINCT courseId) FROM RATE WHERE courseId = ?', [courseId])
+    request = cur.execute('SELECT COUNT( DISTINCT courseId) FROM RATE WHERE courseId = ?', [course_id])
     response = request.fetchone()
     return response[0] > 0
 
 if __name__ == "__main__":
   db = DB("test.db")
-  print(db.getThisSemesterCourse("111", "2"))
+  print(db.get_this_semester_course("111", "2"))
