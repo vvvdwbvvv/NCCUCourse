@@ -18,14 +18,14 @@ class User:
     except:
       raise Exception("token error")
   
-  def addTrack(self, courseId: str):
-    addres = requests.post(get_addtrack_url(self._token, courseId)).json()
-    if(addres[0]["procid"] != "1"): raise Exception("Add fail: " + courseId)
+  def add_track(self, course_id: str):
+    addres = requests.post(get_addtrack_url(self._token, course_id)).json()
+    if(addres[0]["procid"] != "1"): raise Exception("Add fail: " + course_id)
   
-  def deleteTrack(self, courseId: str):
-    deleteres = requests.delete(get_deltrack_url(self._token, courseId)).json()
-    if(deleteres[0]["procid"] != "9"): raise Exception("Delete fail: " + courseId)
+  def delete_track(self, course_id: str):
+    deleteres = requests.delete(get_deltrack_url(self._token, course_id)).json()
+    if(deleteres[0]["procid"] != "9"): raise Exception("Delete fail: " + course_id)
     
-  def getTrack(self):
+  def get_track(self):
     courseres = requests.get(get_track_url(self._token)).json()
     return courseres
