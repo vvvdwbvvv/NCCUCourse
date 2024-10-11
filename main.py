@@ -1,12 +1,20 @@
 from bs4 import BeautifulSoup
 from time import sleep
-import os, json, logging, tqdm, requests, datetime, argparse, csv
+import os
+import json
+import logging
+import tqdm
+import requests
+import datetime
+import argparse
+import csv
 from DB import DB
 
 from User import User
 from constant import YEAR_SEM, YEAR, SEM, course_result_csv, COURSERESULT_YEARSEM
 from fetchDescription import fetch_description
 from fetchRate import fetch_rate
+
 # from translateRate import translateRate
 
 all_semesters = [
@@ -72,11 +80,11 @@ if __name__ == "__main__":
             units = requests.get("https://qrysub.nccu.edu.tw/assets/api/unit.json")
             units.raise_for_status()
             units = units.json()
-        except Exception as e:
+        except Exception:
             logging.error("Failed to get unit list, falls back to local cache")
             with open("data/unit.json") as f:
                 units = json.load(f)
-            
+
         categories = list()
         for dp1 in [x for x in units if x["utCodL1"] != "0"]:
             for dp2 in [x for x in dp1["utL2"] if x["utCodL2"] != "0"]:
@@ -186,9 +194,9 @@ if __name__ == "__main__":
                 teacher_name = str(course["teaNam"])
                 tqdm_courses.set_postfix_str("Processing {}".format(teacher_name))
                 if teacher_stat_url.startswith(
-                    "https://newdoc.nccu.edu.tw/teaschm/{}/statisticAll.jsp".format(
-                        YEAR_SEM
-                    )
+                        "https://newdoc.nccu.edu.tw/teaschm/{}/statisticAll.jsp".format(
+                            YEAR_SEM
+                        )
                 ):
                     teacher_id = teacher_stat_url.split(
                         "https://newdoc.nccu.edu.tw/teaschm/{}/statisticAll.jsp-tnum=".format(
@@ -198,7 +206,7 @@ if __name__ == "__main__":
                     teacher_id_dict[teacher_name] = teacher_id
                     db.add_teacher(teacher_id, teacher_name)
                 elif teacher_stat_url.startswith(
-                    "https://newdoc.nccu.edu.tw/teaschm/{}/set20.jsp".format(YEAR_SEM)
+                        "https://newdoc.nccu.edu.tw/teaschm/{}/set20.jsp".format(YEAR_SEM)
                 ):
                     # use ip to avoid name resolve error, and add time out
                     res = requests.get(
@@ -283,7 +291,7 @@ if __name__ == "__main__":
                         x.find_all("td")
                         for x in courses
                         if x.find_all("td")[-1].find("a")
-                        and int(x.find_all("td")[0].text) > 100
+                           and int(x.find_all("td")[0].text) > 100
                     ]
                     tqdm_courses = tqdm.tqdm(
                         available_courses, total=len(available_courses), leave=False
