@@ -70,7 +70,9 @@ class DB:
     def add_rate(self, row_id: str, course_id: str, teacher_id: str, content: str, content_en: str):
         cur = self.con.cursor()
         cur.execute(
-            "INSERT OR REPLACE INTO RATE (row_id, course_id, teacher_id, content, content_en) VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO RATE (row_id, course_id, teacher_id, content, content_en) VALUES (%s, %s, %s, %s, %s) "
+            "ON CONFLICT (courseId, rowId) DO UPDATE SET teacherId = EXCLUDED.teacherId, "
+            "content = EXCLUDED.content, contentEn = EXCLUDED.contentEn",
             (row_id, course_id, teacher_id, content, content_en))
         self.con.commit()
 
@@ -166,15 +168,16 @@ class DB:
 
     def get_this_semester_course(self, y: str, s: str):
         cur = self.con.cursor()
-        request = cur.execute('SELECT DISTINCT subNum FROM COURSE WHERE y = ? AND s = ?', [y, s])
+        request = cur.execute('SELECT COUNT(*) FROM COURSE WHERE id = %s AND dp1 = %s AND dp2 = %s AND dp3 = %s',
+                              (course_id, dp["dp1"], dp["dp2"], dp["dp3"]))
         response = request.fetchall()
 
         return [str(x[0]) for x in response]
 
     def is_course_exist(self, course_id: str, dp: dict):
         cur = self.con.cursor()
-        request = cur.execute('SELECT COUNT(*) FROM COURSE WHERE id = ? AND dp1 = ? AND dp2 = ? AND dp3 = ?',
-                              [course_id, dp["dp1"], dp["dp2"], dp["dp3"]])
+        request = cur.execute('SELECT COUNT(*) FROM COURSE WHERE id = %s AND dp1 = %s AND dp2 = %s AND dp3 = %s',
+                              (course_id, dp["dp1"], dp["dp2"], dp["dp3"]))
         response = request.fetchone()
         return response[0] > 0
 
