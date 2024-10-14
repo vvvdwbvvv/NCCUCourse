@@ -12,6 +12,7 @@ try:
 except psycopg2.OperationalError as e:
     print(f"Failed to connect to the database: {e}")
 
+
 class DB:
     con: connection
 

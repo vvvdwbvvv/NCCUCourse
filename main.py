@@ -62,7 +62,8 @@ parser.add_argument("--fast", action="store_true", help="Fetch this semester onl
 parser.add_argument("--teacher", action="store_true", help="Fetch teacher")
 parser.add_argument("--rate", action="store_true", help="Fetch rate")
 parser.add_argument("--result", action="store_true", help="Fetch result")
-parser.add_argument("--db", help="Database connection string", default="dbname=dbname user=user password=password host=host port=port")
+parser.add_argument("--db", help="Database connection string",
+                    default="dbname=dbname user=user password=password host=host port=port")
 args = parser.parse_args()
 
 if __name__ == "__main__":

@@ -18,11 +18,11 @@ TRACE_API = SERVER_URL + "tracing/"
 
 def URL(id, year_sem=YEAR + SEM):
     return (
-        "http://newdoc.nccu.edu.tw/teaschm/"
-        + year_sem
-        + "/statistic.jsp-tnum="
-        + id
-        + ".htm"
+            "http://newdoc.nccu.edu.tw/teaschm/"
+            + year_sem
+            + "/statistic.jsp-tnum="
+            + id
+            + ".htm"
     )
 
 
@@ -38,6 +38,7 @@ def rate_qry():
 
 
 COURSERESULT_YEARSEM = ["1102", "1111", "1112", "1121"]
+
 
 def course_result_csv(sem):
     return sem + "CourseResult.csv"
