@@ -17,6 +17,15 @@ from fetchRate import fetch_rate
 
 # from translateRate import translateRate
 
+from dotenv import load_dotenv
+
+load_dotenv()
+dbname = os.getenv('DB_NAME')
+user = os.getenv('DB_USER')
+password = os.getenv('DB_PASSWORD')
+host = os.getenv('DB_HOST')
+port = os.getenv('DB_PORT')
+
 all_semesters = [
     "1011",
     "1012",
@@ -53,7 +62,7 @@ parser.add_argument("--fast", action="store_true", help="Fetch this semester onl
 parser.add_argument("--teacher", action="store_true", help="Fetch teacher")
 parser.add_argument("--rate", action="store_true", help="Fetch rate")
 parser.add_argument("--result", action="store_true", help="Fetch result")
-parser.add_argument("--db", help="Database name", default="test.db")
+parser.add_argument("--db", help="Database connection string", default="dbname=dbname user=user password=password host=host port=port")
 args = parser.parse_args()
 
 if __name__ == "__main__":
@@ -68,7 +77,10 @@ if __name__ == "__main__":
     if os.path.exists(os.path.join(dirPath, "_data")):
         os.makedirs(os.path.join(dirPath, "_data"), exist_ok=True)
 
-    db = DB(args.db)
+    db_connection_string = (
+        f"dbname={dbname} user={user} password={password} host={host} port={port}"
+    )
+    db = DB(db_connection_string)
 
     # ==============================
     # \ 1. Fetch Classes           \
