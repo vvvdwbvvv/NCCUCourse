@@ -4,10 +4,10 @@ from psycopg2.extensions import connection
 from dotenv import load_dotenv
 
 load_dotenv()
-location = f"dbname='{os.getenv('DB_NAME')}' user='{os.getenv('DB_USER')}' password='{os.getenv('DB_PASSWORD')}' host='{os.getenv('DB_HOST')}' port='{os.getenv('DB_PORT')}'"
+PATH = f"dbname='{os.getenv('DB_NAME')}' user='{os.getenv('DB_USER')}' password='{os.getenv('DB_PASSWORD')}' host='{os.getenv('DB_HOST')}' port='{os.getenv('DB_PORT')}'"
 
 try:
-    con = psycopg2.connect(location)
+    con = psycopg2.connect(PATH)
     print("Connected to the database successfully.")
 except psycopg2.OperationalError as e:
     print(f"Failed to connect to the database: {e}")
